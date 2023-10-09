@@ -23,7 +23,7 @@ $this->tarefa=new Tarefa();
      */
     public function create()
     {
-        //
+        return view('tarefa_create');
     }
 
     /**
@@ -31,23 +31,31 @@ $this->tarefa=new Tarefa();
      */
     public function store(Request $request)
     {
-        //
+        $created = $this->tarefa->create([
+            'titulo'=>$request->input('titulo'),
+            'descricao'=>$request->input('descricao')]);
+        if($created){
+            return redirect()->back()->with('message', 'Criado com sucesso');
+        }else {
+            return redirect()->back()->with('message','Erro na criação da tarefa');
+                   }
     }
+
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Tarefa $tarefa)
     {
-        //
+        return view('tarefa_show',['tarefa'=>$tarefa]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Tarefa $tarefa)
     {
-        //
+        return view('tarefa_edit',['tarefa'=>$tarefa]);
     }
 
     /**
@@ -55,7 +63,12 @@ $this->tarefa=new Tarefa();
      */
     public function update(Request $request, string $id)
     {
-        //
+        $updated = $this->tarefa->where('id',$id)->update($request->except(['_token','_method']));
+        if($updated){
+            return redirect()->back()->with('message', 'Editado com sucesso');
+        }else {
+            return redirect()->back()->with('message','Nenhuma edição realizada');
+            }
     }
 
     /**
@@ -63,6 +76,7 @@ $this->tarefa=new Tarefa();
      */
     public function destroy(string $id)
     {
-        //
+        $this->tarefa->where('id',$id)->delete();
+        return redirect()->route('tarefas.index');
     }
 }
